@@ -1,0 +1,136 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id          String       @id @default(uuid())
+  profile     profile?
+  email       String       @unique
+  name        String
+  user_secret User_Secret?
+  session     Session?
+  reviews     Review[]
+  billing     Billing[]
+  addtocard   addtocart?
+  address     String
+  Order      Order[]
+}
+
+model profile {
+  id            String @id @default(uuid())
+  profile_image String
+  user          User   @relation(fields: [userId], references: [id])
+  userId        String @unique
+}
+
+model User_Secret {
+  secret_id String @id @default(uuid())
+  password  String
+  secret    User   @relation(fields: [userId], references: [id]) // references `id` of `Profile`
+  userId    String @unique
+}
+
+model Session {
+  session_id   String @id @default(uuid())
+  refreshToken String
+  user_session User   @relation(fields: [userId], references: [id])
+  userId       String @unique
+}
+
+model Product {
+  product_id    String      @id @default(uuid())
+  productName   String
+  description   String
+  price         Int
+  quantity      Int
+  reviews       Review[]
+  product_size  Size[]
+  product_color Color[]
+  billing       Billing[]
+  carditem      carditems[]
+}
+
+model Order {
+  id         String      @id @default(uuid())
+  tot_amount Int
+  contact    String
+  address    String
+  orderItem  oderItem[]
+  user_Order User        @relation(fields: [userId], references: [id])
+  userId     String
+  payment    String
+}
+
+model oderItem{
+  id  String @id @default(uuid())
+  quantity  String
+  price String
+  oder_item  Order   @relation(fields: [orderitems], references: [id])
+  orderitems String
+}
+
+
+
+model addtocart {
+  addtocard_id String      @id @default(uuid())
+  user_card    User        @relation(fields: [userId], references: [id])
+  userId       String      @unique
+  carditems    carditems[]
+}
+
+model carditems {
+  id            String    @id @default(uuid())
+  card_relation addtocart @relation(fields: [card_Id], references: [addtocard_id])
+  card_Id       String
+  product_card  Product   @relation(fields: [products], references: [product_id])
+  products      String
+}
+
+model Review {
+  id              String  @id @default(uuid())
+  product_reviews Product @relation(fields: [productId], references: [product_id])
+  productId       String
+  comment         String
+  user_review     User    @relation(fields: [userId], references: [id])
+  userId          String
+}
+
+model Billing {
+  billing_id      String  @id @default(uuid())
+  product_billing Product @relation(fields: [productId], references: [product_id])
+  productId       String
+  user_billing    User    @relation(fields: [userId], references: [id])
+  userId          String
+}
+
+model Contact {
+  contact_id  String @id @default(uuid())
+  address     String
+  phone       Int
+  workingTime String
+}
+
+model Size {
+  size_id      String  @id @default(uuid())
+  size         String
+  product_size Product @relation(fields: [productId], references: [product_id])
+  productId    String
+}
+
+model Color {
+  color_id      String  @id @default(uuid())
+  color         String
+  product_color Product @relation(fields: [productId], references: [product_id])
+  productId     String
+}
