@@ -19,12 +19,12 @@ model User {
   email       String       @unique
   name        String
   user_secret User_Secret?
-  session     Session?
+  session     Session[]
   reviews     Review[]
-  billing     Billing[]
+  
   addtocard   addtocart?
   address     String
-  Order      Order[]
+  Order       Order[]
 }
 
 model profile {
@@ -45,7 +45,7 @@ model Session {
   session_id   String @id @default(uuid())
   refreshToken String
   user_session User   @relation(fields: [userId], references: [id])
-  userId       String @unique
+  userId       String
 }
 
 model Product {
@@ -55,32 +55,40 @@ model Product {
   price         Int
   quantity      Int
   reviews       Review[]
+  orderItems    oderItem[]
   product_size  Size[]
   product_color Color[]
-  billing       Billing[]
   carditem      carditems[]
+
 }
 
 model Order {
-  id         String      @id @default(uuid())
+  id         String     @id @default(uuid())
   tot_amount Int
   contact    String
   address    String
   orderItem  oderItem[]
-  user_Order User        @relation(fields: [userId], references: [id])
+  user_Order User       @relation(fields: [userId], references: [id])
   userId     String
   payment    String
+  status     status     @default(PENDING)
 }
 
-model oderItem{
-  id  String @id @default(uuid())
-  quantity  String
-  price String
-  oder_item  Order   @relation(fields: [orderitems], references: [id])
+enum status {
+  PENDING
+  SHIPPED
+  DELIVERED
+}
+
+model oderItem {
+  id         String @id @default(uuid())
+  quantity   String
+  price      String
+  oder_item  Order  @relation(fields: [orderitems], references: [id])
   orderitems String
+  product_item  Product @relation(fields: [ productid],references: [  product_id])
+  productid  String
 }
-
-
 
 model addtocart {
   addtocard_id String      @id @default(uuid())
@@ -106,13 +114,7 @@ model Review {
   userId          String
 }
 
-model Billing {
-  billing_id      String  @id @default(uuid())
-  product_billing Product @relation(fields: [productId], references: [product_id])
-  productId       String
-  user_billing    User    @relation(fields: [userId], references: [id])
-  userId          String
-}
+
 
 model Contact {
   contact_id  String @id @default(uuid())

@@ -1,10 +1,9 @@
-
-console.log(  require('dotenv').config());
+require('dotenv').config();
 const express =require('express')
 const app = express()
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
-module.exports = prisma
+module.exports = prisma;
 
 
 
@@ -14,7 +13,9 @@ module.exports = prisma
 const  reviewRoute = require('./routes/review');
 const userRoute = require('./routes/user');
 const productRoute = require('./routes/product');
-const verifyJWT = require('./middleware/JWTverify');
+const orderRoute = require('./routes/order');
+const  cartRoute = require('./routes/cart')
+const verifyJWT = require('./middleware/verifyJWT');
 // routes call 
 app.use(express.json());
 
@@ -24,11 +25,13 @@ app.get("/",(req,res)=>{
 app.use("/user",userRoute)
 app.use("/product",productRoute)
 app.use("/review",reviewRoute)
-
+app.use(verifyJWT)
+app.use("/order",orderRoute)
+app.use("/cart",cartRoute)
 
 
 
 app.listen(process.env.PORT,()=>{
-  console.log("listening");
+  console.log("listening..........");
   
 })

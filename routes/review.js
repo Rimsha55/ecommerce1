@@ -3,23 +3,15 @@ const  router =express.Router();
 const app = express() 
 
 
-const { createReview ,getReviewsByProduct,updateReview,deleteReview } = require("../controllers/reviewController");
-
-router.post('/add',createReview)
-
+const { createReview } = require('../controllers/reviewController');
+const verifyJWT = require("../middleware/verifyJWT");
 
 
 
 
-
-
-
-
-router.get('/:productId', getReviewsByProduct);
-
-router.put('/:reviewId', updateReview);
-
-
-router.delete('/:reviewId',deleteReview);
+// Route to create a review for a product in an order
+router.post('/createReview',verifyJWT, createReview);
 
 module.exports = router;
+
+

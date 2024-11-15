@@ -2,7 +2,8 @@ const prisma = require("../index");
 require('dotenv').config();
 const bcrypt = require("bcrypt");
 
-const jwt = require('jsonwebtoken')
+const jwt = require('jsonwebtoken');
+const { UserRegisterDTO, UserLoginDTO } = require("../DTO/user");
 
 const createUser = async(req,res)=>{
     try {
@@ -34,7 +35,8 @@ const createUser = async(req,res)=>{
             }
         })
         console.log(user);
-        res.status(200).send(user)
+        const modifieduser = UserRegisterDTO(user)
+        res.status(200).send(modifieduser)
         
     } catch (error) {
         console.log(error);
@@ -83,9 +85,16 @@ const login = async (req, res) => {
         userId: matchedUser.id
       }
     });
-
-    console.log(userSession);
-    res.json({ user: matchedUser, accessToken, refreshToken });
+ console.log(matchedUser);
+ 
+  const user={
+    matchedUser,
+    accessToken
+  }
+  
+  
+    const modifieduser = UserLoginDTO(user)
+    res.status(200).send(modifieduser)
   } catch (error) {
     console.error("Error:", error);
     res.status(500).json({ error: error.message });

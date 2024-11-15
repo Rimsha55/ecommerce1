@@ -1,39 +1,40 @@
 const prisma = require("../index");
 
 const createOrder = async (req, res) => {
-  const { userId } = req;
+  const  {userId}  = req;
   const {
-    tot_amount,
-    
+    tot_amount, 
     contact,
     address,
-    payment_mode,
+    payment,
     product_Id,
     quantity,
-    price,
+    status,
+    price
   } = req.body;
 
   try {
     const order = await prisma.order.create({
       data: {
         userId,
-        tot_amount,
-        
+        tot_amount, 
         contact,
         address,
-        payment_mode,
-        orderItems: {
+        payment,
+        status,
+        orderItem: {
           create: {
-            productId: product_Id,
+            productid: product_Id,
             quantity: quantity,
             price: price,
+          
           },
         },
       },
       include: {
-        orderItems: {
-          include: {
-            product_items: true,
+        orderItem: {
+          include: { 
+            product_item: true,
           },
         },
       },
@@ -48,8 +49,12 @@ const createOrder = async (req, res) => {
 const getAllOrders = async (req, res) => {
   try {
     const orders = await prisma.order.findMany({
+      
+     
       include: {
-        orderItems: true,
+        orderItem: true,
+        
+        
       },
     });
 
@@ -65,7 +70,7 @@ const getUserOrders = async (req, res) => {
     const orders = await prisma.order.findMany({
       where: { userId },
       include: {
-        orderItems: true, 
+        orderItem: true, 
       },
     });
 

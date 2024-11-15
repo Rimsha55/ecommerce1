@@ -1,5 +1,7 @@
 
+const { createproductDTO ,getproductDTO } = require("../DTO/product");
 const prisma = require("../index");
+const { getproduct } = require("../validations/product");
 
 
 
@@ -23,13 +25,15 @@ const createProduct = async (req, res) => {
                 },
                
             },
-            include: {
-               
+            include: { 
                 product_size:true,
                 product_color: true
             },
         })
-        res.json({ product });
+        console.log(product);
+        const modifiedproduct = createproductDTO(product)
+       
+        res.json({ modifiedproduct });
     } catch (error) {
         console.error("Error creating product:", error);
         res.status(500).json({ error: error.message });
@@ -39,12 +43,12 @@ const createProduct = async (req, res) => {
 
 const getProduct = async (req, res) => {
     try {
-        const products = await prisma.Product.findMany({
+        const product = await prisma.product.findMany({
             select: {
                 productName: true,
                 quantity: true,
                 price: true,
-                describe: true,
+                description: true,
                 product_size: {
                     select: {
                         size: true
@@ -60,8 +64,9 @@ const getProduct = async (req, res) => {
 
 
         })
-        console.log({ product });
-        res.json({ product })
+        // console.log({ product });
+        const getProduct = getproductDTO(product)
+        res.json(getProduct )
 
     }
     catch (error) {
