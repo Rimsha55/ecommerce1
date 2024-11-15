@@ -10,30 +10,41 @@ const createUser = async(req,res)=>{
         const {name,email,password,address} = req.body
         console.log(email);
         
-        const matchUser = await prisma.user.findFirst({
-            where:{
-                email,
-            }
-        })
+        // const matchUser = await prisma.user.findFirst({
+        //     where:{
+        //         email,
+        //     }
+        // })
+
+        const matchUser = await prisma.$queryRaw`
+        select email from user where email = ${email}
+        `;
+
+
         if (matchUser) {
             return res.status(400).json({error:"User already exist"})
         }
         const hashedPass = await bcrypt.hash(password,10)
-        const user = await prisma.user.create({
-            data:{
-                name,
-                email,
-                address,
-                user_secret:{
-                    create:{
-                        password:hashedPass
-                    }
-                }
-            },
-            include:{
-                user_secret:true
-            }
-        })
+        // const user = await prisma.user.create({
+        //     data:{
+        //         name,
+        //         email,
+        //         address,
+        //         user_secret:{
+        //             create:{
+        //                 password:hashedPass
+        //             }
+        //         }
+        //     },
+        //     include:{
+        //         user_secret:true
+        //     }
+        // })
+
+        // raw query
+        const user = await prisma.user.$queryRaw`
+        INSERT INTO USER (id, name, email) VALUES (${userId}, ${name}, ${email})
+      `,
         console.log(user);
         const modifieduser = UserRegisterDTO(user)
         res.status(200).send(modifieduser)
@@ -53,10 +64,17 @@ const login = async (req, res) => {
     const { email, password } = req.body;
 
    
-    const matchedUser = await prisma.user.findFirst({
-      where: { email },
-      include: { user_secret: true }
-    });
+    // const matchedUser = await prisma.user.findFirst({
+    //   where: { email },
+    //   include: { user_secret: true }
+    // });
+
+    // raw query 
+    const matchedUser = await prisma.$queryRaw`
+    select email from user where email = ${email}
+    `
+    
+
    console.log(matchedUser,"............");
    
     if (!matchedUser) {

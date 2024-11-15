@@ -48,15 +48,18 @@ const createOrder = async (req, res) => {
 
 const getAllOrders = async (req, res) => {
   try {
-    const orders = await prisma.order.findMany({
+    // const orders = await prisma.order.findMany({
       
      
-      include: {
-        orderItem: true,
+    //   include: {
+    //     orderItem: true,
         
         
-      },
-    });
+    //   },
+    // });
+    const orders = await prisma.$queryRaw`
+    select orderItem from order 
+    `
 
     res.json({ orders });
   } catch (error) {

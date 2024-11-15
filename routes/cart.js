@@ -8,12 +8,13 @@ const {
     deleteCart,
     deleteCartItems,
 }=require("../controllers/cardController");
-const {cartschema } = require('../validations/cart')
+const {cartschema,getcartschema } = require('../validations/cart')
 const validate = require('../middleware/validate')
 
 
 
-router.post("/cart",validate(cartschema),  createCart);           
+router.post("/cart",validate(cartschema),  createCart);
+router.get("/getcart",validate(getcartschema), getCart)           
             
 
 

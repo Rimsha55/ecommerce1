@@ -14,10 +14,10 @@ const getcartschema= Joi.object({
     params:Joi.object({}),
     object: Joi.object({}),
     body:Joi.object({
-        productId : Joi.string().required(),
+      
     })
 })
 
 
 
-module.exports={cartschema};
+module.exports={cartschema,getcartschema};

@@ -1,5 +1,5 @@
 
-const { createcartDTO } = require("../DTO/cart");
+const { cartDTO } = require("../DTO/cart");
 const prisma = require("../index");
 
 
@@ -24,6 +24,8 @@ const createCart = async (req, res) => {
       const productInCart = Cart.carditems.find(
         (item) => item.products === productId
       );
+    
+  
 
       //  res.status(200).send({cartcreate})
       if (productInCart) {
@@ -82,12 +84,12 @@ const createCart = async (req, res) => {
 const getCart = async (req, res) => {
   const { userId } = req;
   try {
-    const cart = await prisma.cart.findUnique({
+    const cart = await prisma.addtocart.findUnique({
       where: { userId },
       include: {
         carditems: {
           include: {
-            product_cart: true,
+            product_card: true,
           },
         },
       },
@@ -95,8 +97,8 @@ const getCart = async (req, res) => {
     if (!cart) {
       return res.status(404).json({ message: "Cart not found" });
     }
-
-    res.json({ cart });
+   const getCart = cartDTO(cart)
+    res.json({getCart});
   } catch (error) {
     console.error("Error fetching cart:", error);
     res.status(500).json({ error: error.message });

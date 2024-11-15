@@ -1,13 +1,19 @@
-function createcartDTO(createcart){
-    if (!createcart) {
-        console.error("No cart info provided to DTO");
-        return null;
-      }
-     console.log(createcart,".....");
-      
-  return {
-    productId: createcart.productId || null,
+const { log } = require("console");
+
+const  cartDTO= (readCart) =>{
+    console.log(readCart,".....");
+         return{
+        
+        // ProductId:readCart.CartItems.map((items)=>({
+        //     ProductId: items.ProductId
+        // })) || null,
+        userId:readCart.UserId,
+        cartItems:readCart.carditems.map((items)=>({
+             
+            products:items.products 
+        })) || null,
+    }
     
-  };
+   
 }
-module.exports ={createcartDTO};
+module.exports ={cartDTO}
